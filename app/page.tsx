@@ -1,5 +1,5 @@
 
-import IntroScene from "@/components/IntroScene";
+import IntroScene from "../components/IntroScene";
 
 export default function Home() {
   return (
