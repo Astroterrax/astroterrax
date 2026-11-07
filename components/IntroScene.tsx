@@ -5,32 +5,20 @@ import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-// --------------------------------------------------
-// PALETA DO PLANETA
-// --------------------------------------------------
-
 const COLORS = {
-  space: "#090d1b",
-  ground: "#252b45",
-  groundLight: "#42405f",
+  sky: "#83c9ed",
+  grass: "#6fae62",
+  grassLight: "#91c879",
+  dirt: "#9b7956",
+  dirtLight: "#b8956e",
+  stone: "#858b91",
   cyan: "#63e8ff",
   blue: "#3677c9",
-  suit: "#e9eff5",
-  suitShadow: "#aebdce",
-  visor: "#101a32",
-  gold: "#ffca70",
+  suit: "#edf3f7",
+  visor: "#152b43",
+  gold: "#ffc96b",
   violet: "#9274ff",
-  plant: "#6cdbb1",
 };
-
-const CAMERA_INITIAL = new THREE.Vector3(0, 3.4, 10);
-const CAMERA_FINAL = new THREE.Vector3(1.5, 2.7, 7.2);
-const LOOK_INITIAL = new THREE.Vector3(0, 1, 0);
-const LOOK_FINAL = new THREE.Vector3(1.7, 1.1, 0);
-
-// --------------------------------------------------
-// ASTRONAUTA PROCEDURAL
-// --------------------------------------------------
 
 function Astronaut({ started }: { started: boolean }) {
   const astronautRef = useRef<THREE.Group>(null!);
@@ -42,16 +30,16 @@ function Astronaut({ started }: { started: boolean }) {
     const time = state.clock.elapsedTime;
 
     astronautRef.current.position.y =
-      Math.sin(time * 1.3) * 0.035;
+      0.81 + Math.sin(time * 1.3) * 0.018;
 
     astronautRef.current.rotation.y =
-      Math.sin(time * 0.35) * 0.08 + (started ? 0.12 : 0);
+      Math.sin(time * 0.35) * 0.06 + (started ? 0.12 : 0);
 
     leftArmRef.current.rotation.z =
-      Math.sin(time * 1.1) * 0.045 - 0.08;
+      Math.sin(time * 1.1) * 0.035 - 0.08;
 
     rightArmRef.current.rotation.z =
-      Math.sin(time * 1.1 + 1) * 0.045 + 0.08;
+      Math.sin(time * 1.1 + 1) * 0.035 + 0.08;
 
     helmetRef.current.rotation.y =
       Math.sin(time * 0.65) * 0.035;
@@ -60,18 +48,14 @@ function Astronaut({ started }: { started: boolean }) {
   return (
     <group
       ref={astronautRef}
-      position={[2.25, 0, 0.25]}
+      position={[2.25, 0.81, 0.25]}
       rotation={[0, -0.12, 0]}
     >
-      {/* MOCHILA DE SOBREVIVÊNCIA */}
+      {/* MOCHILA */}
       <group position={[0, 0.25, -0.48]}>
         <mesh castShadow>
           <boxGeometry args={[0.78, 0.95, 0.38]} />
-          <meshStandardMaterial
-            color="#53647e"
-            metalness={0.55}
-            roughness={0.5}
-          />
+          <meshStandardMaterial color="#53647e" metalness={0.4} />
         </mesh>
 
         <mesh position={[0, 0.28, -0.23]}>
@@ -95,12 +79,12 @@ function Astronaut({ started }: { started: boolean }) {
         </mesh>
       </group>
 
-      {/* PERNAS */}
+      {/* PERNAS E BOTAS */}
       {[-0.25, 0.25].map((x, index) => (
         <group key={index} position={[x, -0.48, 0]}>
           <mesh castShadow>
             <capsuleGeometry args={[0.2, 0.48, 5, 10]} />
-            <meshStandardMaterial color={COLORS.suit} roughness={0.7} />
+            <meshStandardMaterial color={COLORS.suit} roughness={0.75} />
           </mesh>
 
           <mesh position={[0, -0.05, 0.185]}>
@@ -108,19 +92,14 @@ function Astronaut({ started }: { started: boolean }) {
             <meshStandardMaterial color={COLORS.blue} />
           </mesh>
 
-          {/* JOELHEIRA */}
           <mesh position={[0, 0.13, 0.17]}>
             <boxGeometry args={[0.3, 0.2, 0.1]} />
             <meshStandardMaterial color="#71839b" />
           </mesh>
 
-          {/* BOTAS */}
           <mesh position={[0, -0.39, 0.09]} castShadow>
             <boxGeometry args={[0.42, 0.23, 0.58]} />
-            <meshStandardMaterial
-              color="#dce5ef"
-              roughness={0.75}
-            />
+            <meshStandardMaterial color="#dce5ef" roughness={0.75} />
           </mesh>
 
           <mesh position={[0, -0.515, 0.12]}>
@@ -133,20 +112,13 @@ function Astronaut({ started }: { started: boolean }) {
       {/* CORPO */}
       <mesh position={[0, 0.22, 0]} castShadow>
         <capsuleGeometry args={[0.43, 0.62, 6, 12]} />
-        <meshStandardMaterial
-          color={COLORS.suit}
-          roughness={0.72}
-        />
+        <meshStandardMaterial color={COLORS.suit} roughness={0.72} />
       </mesh>
 
       {/* PEITORAL */}
       <mesh position={[0, 0.32, 0.39]}>
         <boxGeometry args={[0.52, 0.38, 0.12]} />
-        <meshStandardMaterial
-          color="#536b8b"
-          metalness={0.25}
-          roughness={0.5}
-        />
+        <meshStandardMaterial color="#536b8b" metalness={0.25} />
       </mesh>
 
       <mesh position={[0, 0.39, 0.465]}>
@@ -159,7 +131,7 @@ function Astronaut({ started }: { started: boolean }) {
         <meshBasicMaterial color={COLORS.gold} />
       </mesh>
 
-      {/* OMBROS E BRAÇOS */}
+      {/* BRAÇO ESQUERDO */}
       <group ref={leftArmRef} position={[-0.52, 0.53, 0]}>
         <mesh castShadow>
           <capsuleGeometry args={[0.19, 0.52, 5, 10]} />
@@ -177,6 +149,7 @@ function Astronaut({ started }: { started: boolean }) {
         </mesh>
       </group>
 
+      {/* BRAÇO DIREITO */}
       <group ref={rightArmRef} position={[0.52, 0.53, 0]}>
         <mesh castShadow>
           <capsuleGeometry args={[0.19, 0.52, 5, 10]} />
@@ -198,45 +171,32 @@ function Astronaut({ started }: { started: boolean }) {
       <group ref={helmetRef} position={[0, 1.25, 0.02]}>
         <mesh castShadow>
           <sphereGeometry args={[0.7, 24, 20]} />
-          <meshStandardMaterial
-            color="#f3f6fa"
-            roughness={0.3}
-            metalness={0.08}
-          />
+          <meshStandardMaterial color="#f3f6fa" roughness={0.3} />
         </mesh>
 
-        {/* VISOR */}
         <mesh position={[0, -0.02, 0.48]} scale={[1, 0.78, 0.38]}>
           <sphereGeometry args={[0.59, 24, 20]} />
           <meshPhysicalMaterial
             color={COLORS.visor}
-            metalness={0.8}
-            roughness={0.16}
+            metalness={0.75}
+            roughness={0.17}
             clearcoat={1}
-            clearcoatRoughness={0.08}
           />
         </mesh>
 
-        {/* REFLEXO DO VISOR */}
         <mesh
           position={[-0.22, 0.2, 0.69]}
           rotation={[0, 0, -0.45]}
         >
           <boxGeometry args={[0.07, 0.28, 0.018]} />
-          <meshBasicMaterial
-            color="#a8f2ff"
-            transparent
-            opacity={0.7}
-          />
+          <meshBasicMaterial color="#a8f2ff" />
         </mesh>
 
-        {/* ANEL DO CAPACETE */}
         <mesh position={[0, -0.53, 0]}>
           <torusGeometry args={[0.54, 0.075, 8, 28]} />
           <meshStandardMaterial color="#71849e" metalness={0.5} />
         </mesh>
 
-        {/* LUZES LATERAIS */}
         {[-1, 1].map((side) => (
           <mesh key={side} position={[side * 0.64, 0, 0.04]}>
             <sphereGeometry args={[0.09, 10, 10]} />
@@ -253,85 +213,121 @@ function Astronaut({ started }: { started: boolean }) {
 // --------------------------------------------------
 
 function CrashedShip() {
-  const shipRef = useRef<THREE.Group>(null!);
-
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-    shipRef.current.position.y =
-      -0.05 + Math.sin(time * 0.45) * 0.015;
-  });
-
   return (
     <group
-      ref={shipRef}
       position={[-1.6, 0.75, -3.5]}
       rotation={[0.12, 0.2, -0.23]}
     >
-      {/* FUSELAGEM */}
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[0.58, 0.75, 3.1, 10]} />
         <meshStandardMaterial
           color="#64758c"
-          metalness={0.75}
+          metalness={0.65}
           roughness={0.5}
         />
       </mesh>
 
-      {/* PONTA */}
       <mesh position={[1.67, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
         <coneGeometry args={[0.58, 0.75, 10]} />
-        <meshStandardMaterial color="#9aa8b9" metalness={0.6} />
+        <meshStandardMaterial color="#9aa8b9" metalness={0.5} />
       </mesh>
 
-      {/* CABINE */}
       <mesh position={[0, 0.43, 0.1]} rotation={[0.2, 0, 0]}>
         <sphereGeometry args={[0.46, 16, 12]} />
         <meshPhysicalMaterial
-          color="#153b62"
-          metalness={0.7}
-          roughness={0.12}
+          color="#397da5"
+          metalness={0.5}
+          roughness={0.2}
           transparent
           opacity={0.92}
         />
       </mesh>
 
-      {/* ASA DANIFICADA */}
       <mesh
         position={[-0.2, -0.2, 0.72]}
         rotation={[0.2, 0.2, -0.4]}
       >
         <boxGeometry args={[1.3, 0.08, 1.8]} />
-        <meshStandardMaterial color="#4a5b74" metalness={0.6} />
+        <meshStandardMaterial color="#4a5b74" metalness={0.5} />
       </mesh>
 
-      {/* MOTOR */}
       <mesh position={[-1.5, 0, 0]}>
         <cylinderGeometry args={[0.35, 0.48, 0.5, 10]} />
-        <meshStandardMaterial color="#28364c" metalness={0.8} />
+        <meshStandardMaterial color="#28364c" metalness={0.7} />
       </mesh>
 
-      {/* ENERGIA RESIDUAL */}
       <mesh position={[-1.76, 0, 0]}>
         <cylinderGeometry args={[0.22, 0.3, 0.08, 12]} />
         <meshBasicMaterial color={COLORS.cyan} />
       </mesh>
 
-      {/* ANTENA */}
       <mesh position={[0.2, 0.95, -0.15]}>
         <cylinderGeometry args={[0.025, 0.025, 0.85, 6]} />
-        <meshStandardMaterial color="#aab7c9" metalness={0.8} />
-      </mesh>
-
-      <mesh position={[0.2, 1.38, -0.15]}>
-        <sphereGeometry args={[0.07, 8, 8]} />
-        <meshBasicMaterial color={COLORS.gold} />
+        <meshStandardMaterial color="#aab7c9" />
       </mesh>
     </group>
   );
 }
 
 // --------------------------------------------------
-// TERRENO E ELEMENTOS ALIENÍGENAS
+// NUVENS
+// --------------------------------------------------
+
+function Cloud({
+  position,
+  scale = 1,
+}: {
+  position: [number, number, number];
+  scale?: number;
+}) {
+  const cloudRef = useRef<THREE.Group>(null!);
+
+  useFrame((_, delta) => {
+    cloudRef.current.position.x += delta * 0.045;
+
+    if (cloudRef.current.position.x > 17) {
+      cloudRef.current.position.x = -17;
+    }
+  });
+
+  return (
+    <group ref={cloudRef} position={position} scale={scale}>
+      {[
+        [-0.8, 0, 0, 0.85],
+        [0, 0.18, 0, 1.05],
+        [0.85, 0.02, 0, 0.8],
+        [-0.15, -0.12, 0.25, 0.75],
+      ].map(([x, y, z, size], index) => (
+        <mesh
+          key={index}
+          position={[x, y, z]}
+          scale={[1.3, 0.75, 0.8]}
+        >
+          <sphereGeometry args={[size, 12, 10]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            roughness={1}
+            flatShading={false}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function Clouds() {
+  return (
+    <>
+      <Cloud position={[-7, 7, -13]} scale={1.6} />
+      <Cloud position={[2, 8, -16]} scale={1.25} />
+      <Cloud position={[10, 6, -12]} scale={1.8} />
+      <Cloud position={[-13, 5.5, -10]} scale={1.1} />
+    </>
+  );
+}
+
+// --------------------------------------------------
+// VEGETAÇÃO
 // --------------------------------------------------
 
 function AlienPlant({
@@ -345,7 +341,7 @@ function AlienPlant({
     <group position={position} scale={scale}>
       <mesh position={[0, 0.28, 0]}>
         <cylinderGeometry args={[0.045, 0.08, 0.58, 7]} />
-        <meshStandardMaterial color="#527f83" />
+        <meshStandardMaterial color="#527f55" />
       </mesh>
 
       {[0, 1, 2].map((index) => (
@@ -360,98 +356,159 @@ function AlienPlant({
         >
           <coneGeometry args={[0.15, 0.62, 7]} />
           <meshStandardMaterial
-            color={index % 2 === 0 ? COLORS.plant : COLORS.violet}
-            emissive={index % 2 === 0 ? "#174c49" : "#35205e"}
-            emissiveIntensity={0.5}
-            roughness={0.7}
+            color={index % 2 === 0 ? "#68bfa0" : "#a28ad8"}
+            roughness={0.8}
           />
         </mesh>
       ))}
-
-      <pointLight
-        color={COLORS.plant}
-        intensity={0.35}
-        distance={2}
-      />
     </group>
   );
 }
 
+function GrassTuft({
+  position,
+  scale = 1,
+}: {
+  position: [number, number, number];
+  scale?: number;
+}) {
+  return (
+    <group position={position} scale={scale}>
+      {[0, 1, 2, 3].map((index) => (
+        <mesh
+          key={index}
+          position={[
+            Math.sin(index * 1.7) * 0.08,
+            0.15,
+            Math.cos(index * 1.7) * 0.08,
+          ]}
+          rotation={[0.1, index * 1.7, 0.22 * (index - 1)]}
+        >
+          <coneGeometry args={[0.055, 0.34, 4]} />
+          <meshStandardMaterial
+            color={index % 2 === 0 ? "#4f9950" : "#83bd65"}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// --------------------------------------------------
+// TERRENO
+// --------------------------------------------------
+
 function Terrain() {
+  const dirtPatches = [
+    [-4, -0.16, 1, 2.1, 0.65],
+    [0, -0.16, 3, 2.6, 0.8],
+    [3.5, -0.16, -2, 1.7, 0.7],
+    [-2, -0.16, -4, 2.3, 0.7],
+    [5, -0.16, 3, 1.6, 0.6],
+  ];
+
+  const stones = [
+    [-3.5, -0.08, 0.5, 0.22],
+    [-5, -0.08, -2, 0.34],
+    [4.4, -0.08, -1.8, 0.3],
+    [5.2, -0.08, 1.2, 0.2],
+    [-0.5, -0.08, -4.2, 0.18],
+    [0.5, -0.08, 2.5, 0.15],
+    [-4.5, -0.08, 3, 0.24],
+    [3.5, -0.08, 4, 0.18],
+  ];
+
   return (
     <group>
-      {/* SOLO */}
+      {/* BASE DE GRAMA */}
       <mesh
         position={[0, -0.18, -1]}
         rotation={[-Math.PI / 2, 0, 0]}
         receiveShadow
       >
-        <planeGeometry args={[100, 100, 1, 1]} />
+        <planeGeometry args={[100, 100]} />
         <meshStandardMaterial
-          color={COLORS.ground}
+          color={COLORS.grass}
           roughness={1}
-          metalness={0.05}
         />
       </mesh>
 
-      {/* COLINAS */}
-      <mesh position={[-6, 0.15, -7]} scale={[7, 1.1, 4]}>
-        <sphereGeometry args={[1, 12, 8]} />
-        <meshStandardMaterial color="#202943" roughness={1} />
-      </mesh>
-
-      <mesh position={[7, 0.1, -9]} scale={[8, 1.4, 5]}>
-        <sphereGeometry args={[1, 12, 8]} />
-        <meshStandardMaterial color="#252c48" roughness={1} />
-      </mesh>
-
-      {/* ROCHAS */}
-      {[
-        [-3.5, 0.15, 0.5, 0.65],
-        [-5, 0.18, -2, 0.9],
-        [4.4, 0.15, -1.8, 0.8],
-        [5.2, 0.2, 1.2, 0.55],
-        [-0.5, 0.13, -4.2, 0.5],
-      ].map(([x, y, z, size], index) => (
+      {/* MANCHAS DE TERRA */}
+      {dirtPatches.map(([x, y, z, sx, sz], index) => (
         <mesh
           key={index}
           position={[x, y, z]}
-          rotation={[0.2 * index, 0.6 * index, 0.15]}
-          scale={[size, size * 0.7, size * 0.9]}
+          rotation={[-Math.PI / 2, 0, index * 0.4]}
+          scale={[sx, sz, 1]}
+        >
+          <circleGeometry args={[1, 20]} />
+          <meshStandardMaterial
+            color={index % 2 === 0 ? COLORS.dirt : COLORS.dirtLight}
+            roughness={1}
+          />
+        </mesh>
+      ))}
+
+      {/* PEDRINHAS */}
+      {stones.map(([x, y, z, size], index) => (
+        <mesh
+          key={index}
+          position={[x, y, z]}
+          rotation={[index * 0.2, index, 0.2]}
+          scale={[size * 1.4, size * 0.8, size]}
           castShadow
         >
           <dodecahedronGeometry args={[1, 0]} />
           <meshStandardMaterial
-            color={index % 2 === 0 ? "#59627b" : "#3e4965"}
+            color={index % 2 === 0 ? COLORS.stone : "#a6a29a"}
             roughness={0.95}
           />
         </mesh>
       ))}
 
-      {/* VEGETAÇÃO */}
+      {/* COLINAS AO FUNDO */}
+      <mesh position={[-7, 0.2, -8]} scale={[7, 1.3, 4]}>
+        <sphereGeometry args={[1, 14, 10]} />
+        <meshStandardMaterial color="#719b78" roughness={1} />
+      </mesh>
+
+      <mesh position={[8, 0.15, -10]} scale={[8, 1.5, 5]}>
+        <sphereGeometry args={[1, 14, 10]} />
+        <meshStandardMaterial color="#8bad80" roughness={1} />
+      </mesh>
+
+      {/* VEGETAÇÃO ALIENÍGENA */}
       <AlienPlant position={[-4, 0, -0.8]} scale={1.1} />
       <AlienPlant position={[5, 0, -3]} scale={0.8} />
       <AlienPlant position={[4.5, 0, 2]} scale={0.7} />
       <AlienPlant position={[-5.5, 0, -4]} scale={0.9} />
 
+      {/* GRAMA */}
+      <GrassTuft position={[-2.8, 0, 1.5]} />
+      <GrassTuft position={[-4.5, 0, 2.5]} scale={1.2} />
+      <GrassTuft position={[3.8, 0, 1.5]} />
+      <GrassTuft position={[0.5, 0, -2.5]} />
+      <GrassTuft position={[-5, 0, -1]} scale={0.8} />
+      <GrassTuft position={[5.5, 0, -0.5]} />
+
       {/* CRISTAIS */}
       {[
-        [-2.9, 0.55, -1.5],
-        [4.1, 0.48, -0.2],
-        [-4.8, 0.4, 1.8],
+        [-2.9, 0.35, -1.5],
+        [4.1, 0.35, -0.2],
+        [-4.8, 0.35, 1.8],
       ].map((position, index) => (
         <mesh
           key={index}
           position={position as [number, number, number]}
           rotation={[0.1, index, 0.15]}
         >
-          <octahedronGeometry args={[0.35, 0]} />
+          <octahedronGeometry args={[0.28, 0]} />
           <meshStandardMaterial
             color={COLORS.cyan}
             emissive="#167b9d"
-            emissiveIntensity={1.2}
-            metalness={0.5}
-            roughness={0.2}
+            emissiveIntensity={0.35}
+            metalness={0.25}
+            roughness={0.3}
           />
         </mesh>
       ))}
@@ -460,31 +517,23 @@ function Terrain() {
 }
 
 // --------------------------------------------------
-// ESTRELAS
+// SOL E CÉU
 // --------------------------------------------------
 
-function StarField() {
-  const stars = Array.from({ length: 100 }, (_, index) => {
-    const x = Math.sin(index * 127.1) * 16;
-    const y = 3 + Math.abs(Math.cos(index * 78.2)) * 10;
-    const z = -12 - (index % 13) * 1.3;
-
-    return {
-      position: [x, y, z] as [number, number, number],
-      size: 0.018 + (index % 4) * 0.009,
-    };
-  });
-
+function Sun() {
   return (
-    <group>
-      {stars.map((star, index) => (
-        <mesh key={index} position={star.position}>
-          <sphereGeometry args={[star.size, 5, 5]} />
-          <meshBasicMaterial
-            color={index % 5 === 0 ? COLORS.cyan : "#dce8ff"}
-          />
-        </mesh>
-      ))}
+    <group position={[-7, 9, -18]}>
+      <mesh>
+        <sphereGeometry args={[1.15, 20, 20]} />
+        <meshBasicMaterial color="#fff1c2" />
+      </mesh>
+
+      <pointLight
+        color="#fff0c7"
+        intensity={75}
+        distance={100}
+        decay={2}
+      />
     </group>
   );
 }
@@ -497,45 +546,49 @@ function WorldScene({ started }: { started: boolean }) {
   const { camera } = useThree();
 
   useFrame((_, delta) => {
-    const destination = started ? CAMERA_FINAL : CAMERA_INITIAL;
-    const lookTarget = started ? LOOK_FINAL : LOOK_INITIAL;
+    const destination = started
+      ? new THREE.Vector3(1.5, 2.7, 7.2)
+      : new THREE.Vector3(0, 3.4, 10);
+
+    const target = started
+      ? new THREE.Vector3(1.7, 1.1, 0)
+      : new THREE.Vector3(0, 1, 0);
+
     const smooth = 1 - Math.exp(-delta * 1.2);
 
     camera.position.lerp(destination, smooth);
-    camera.lookAt(lookTarget);
+    camera.lookAt(target);
   });
 
   return (
     <>
-      <color attach="background" args={[COLORS.space]} />
-      <fog attach="fog" args={[COLORS.space, 13, 35]} />
+      <color attach="background" args={[COLORS.sky]} />
+      <fog attach="fog" args={[COLORS.sky, 22, 55]} />
 
-      <ambientLight intensity={1.15} color="#b8caff" />
+      <ambientLight intensity={1.8} color="#ffffff" />
+
+      <hemisphereLight
+        args={["#dff5ff", "#557b48", 1.2]}
+      />
 
       <directionalLight
-        position={[-5, 8, 5]}
-        intensity={2}
-        color="#d4eaff"
+        position={[-5, 10, 5]}
+        intensity={2.4}
+        color="#fff3d8"
       />
 
       <pointLight
         position={[4, 4, 2]}
-        intensity={30}
-        distance={12}
-        color={COLORS.violet}
+        intensity={12}
+        distance={15}
+        color="#b9c9ff"
       />
 
-      <pointLight
-        position={[-4, 3, -1]}
-        intensity={22}
-        distance={10}
-        color={COLORS.cyan}
-      />
-
+      <Sun />
+      <Clouds />
       <Terrain />
       <CrashedShip />
       <Astronaut started={started} />
-      <StarField />
     </>
   );
 }
@@ -575,7 +628,7 @@ export default function IntroScene() {
           near: 0.1,
           far: 100,
         }}
-        dpr={[1, 1.5]}
+        dpr={[1, 1.35]}
         gl={{
           antialias: true,
           alpha: false,
