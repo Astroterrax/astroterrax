@@ -1,5 +1,23 @@
 
-import IntroScene from "../components/IntroScene";
+"use client";
+
+import dynamic from "next/dynamic";
+
+const IntroScene = dynamic(
+  () => import("../components/IntroScene"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "#080914",
+        }}
+      />
+    ),
+  }
+);
 
 export default function Home() {
   return (
@@ -42,7 +60,9 @@ export default function Home() {
             className="start-button"
             type="button"
             onClick={() => {
-              window.dispatchEvent(new CustomEvent("astroterrax:start"));
+              window.dispatchEvent(
+                new CustomEvent("astroterrax:start")
+              );
             }}
           >
             INICIAR EXPEDIÇÃO
